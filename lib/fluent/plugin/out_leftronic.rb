@@ -5,6 +5,7 @@ module Fluent
     config_param :access_key
     config_param :stream_name
     config_param :value, :default => nil
+    config_param :graph_type, :default => "line"
 
     def initialize
       require 'net/https'
@@ -17,8 +18,8 @@ module Fluent
     def configure(conf)
       super
 
-      if @value.nil? || @value
-        raise ConfigError, "leftronic_out requires either 'count' or 'value', but not both"
+      if @value.nil? || @value.size == 0
+        raise ConfigError, "leftronic_out requires 'value'"
       end
 
       @uri = URI.parse("https://www.leftronic.com/customSend/")
@@ -42,7 +43,9 @@ module Fluent
     def write(chunk)
       data = []
       chunk.msgpack_each do |tag, time, record|
-        data << {timestamp: time, number: record[@value]}
+        if @graph_type == 'line'
+          data << {timestamp: time, number: record[@value].to_i}
+        end
       end
       post(accessKey: @access_key, streamName: @stream_name, point: data) if data.length > 0
     end
