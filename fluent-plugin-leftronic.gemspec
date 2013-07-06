@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "fluent-plugin-leftronic"
-  spec.version       = "0.0.1"
+  spec.version       = "0.0.2"
   spec.authors       = ["toyama0919"]
   spec.email         = ["toyama0919@gmail.com"]
   spec.description   = %q{StatHat output plugin for Fluentd.}
