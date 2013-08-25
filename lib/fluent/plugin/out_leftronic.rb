@@ -6,26 +6,41 @@ module Fluent
     config_param :stream_name
     config_param :value, :default => nil
     config_param :graph_type, :default => "line"
+    config_param :display_keys, :default => nil
+    config_param :name_key_pattern, :default => nil
 
     def initialize
-      require 'net/https'
+      Encoding.default_internal = "UTF-8"
       require 'uri'
       require 'json'
-
+      require 'leftronic'
       super
     end
 
     def configure(conf)
       super
-
-      if @value.nil? || @value.size == 0
-        raise ConfigError, "leftronic_out requires 'value'"
+      if @access_key.nil? || @access_key.empty?
+        raise ConfigError, "leftronic configure requires 'access_key'"
       end
 
-      @uri = URI.parse("https://www.leftronic.com/customSend/")
+      if @stream_name.nil? || @stream_name.empty?
+        raise ConfigError, "leftronic configure requires 'stream_name'"
+      end
 
-      @https = Net::HTTP.new(@uri.host, @uri.port)
-      @https.use_ssl = true
+      if @graph_type == 'number' or @graph_type == 'line'
+        if @value.nil? || @value.size == 0
+          raise ConfigError, "leftronic configure requires 'value'"
+        end
+      end
+      
+      unless @display_keys.nil?
+        @default_key = false
+        @leftronic_display_hash = eval(@display_keys)
+        $log.info @leftronic_display_hash
+      else 
+        @default_key = true
+      end
+      @leftronic = Leftronic.new @access_key
     end
 
     def start
@@ -41,21 +56,29 @@ module Fluent
     end
 
     def write(chunk)
-      data = []
       chunk.msgpack_each do |tag, time, record|
-        if @graph_type == 'line'
-          data << {timestamp: time, number: record[@value].to_i}
+        next if record.nil? || record.empty?
+        if @graph_type == 'number' or @graph_type == 'line'
+          next unless record.has_key? @value
+          @leftronic.number(@stream_name ,record[@value].to_i)
+        elsif @graph_type == 'leaderboard' or @graph_type == 'bar' or @graph_type == 'pie'
+          result = Hash.new
+          record.each {|key,value|
+            unless name_key_pattern.nil?
+              next if key !~ /#{@name_key_pattern}/
+            end
+
+            unless @default_key
+              display_key = @leftronic_display_hash.has_key?(key) ? @leftronic_display_hash[key] : key
+            else
+              display_key = key
+            end
+            result[display_key] = value.to_i
+          }
+          $log.info result
+          @leftronic.leaderboard(@stream_name,[result])
         end
       end
-      post(accessKey: @access_key, streamName: @stream_name, point: data) if data.length > 0
-    end
-
-    def post(data)
-      req = Net::HTTP::Post.new(@uri.request_uri)
-      req.content_type = 'application/json'
-      req.body = data.to_json
-
-      @https.request(req)
     end
   end
 end

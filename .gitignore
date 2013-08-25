@@ -1,4 +1,6 @@
 Gemfile.lock
 nbproject/
+.project
 *.gem
 pkg
+test/

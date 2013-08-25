@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "fluent-plugin-leftronic"
-  spec.version       = "0.0.2"
+  spec.version       = "0.0.3"
   spec.authors       = ["toyama0919"]
   spec.email         = ["toyama0919@gmail.com"]
   spec.description   = %q{Leftronic output plugin for Fluentd.}
@@ -19,4 +19,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
+  spec.add_dependency "leftronic"
 end
