@@ -6,6 +6,15 @@ Leftronic output plugin for Fluentd.
 
     $ fluent-gem install fluent-plugin-leftronic
 
+## parameter
+
+param    |   value
+--------|------
+graph_type|line or number or pie or bar or leaderboard
+name_key_pattern|regular expression(pie or bar or leaderboard only)
+display_keys|display key(pie or bar or leaderboard only)
+
+
 ## Configuration
 
     <match leftronic.**>
@@ -21,7 +30,7 @@ Leftronic output plugin for Fluentd.
 	    type  leftronic
 	    access_key ${leftronic-access-key} # leftronic access key
 	    stream_name ${leftronic-stream-name} # leftronic stream_name
-	    graph_type bar # default => line
+	    graph_type bar # default => line , number , pie , bar , leaderboard
 	    name_key_pattern .*_(count)$ # enable => Googlebot_count,Yahoo! Japan_count,smartphone_count disable => Googlebot_rate
 	    display_keys {'Yahoo! Japan_count' => 'yahoo','Googlebot_count' => 'google','smartphone_count' => 'スマートフォン数'}
 	  </store>
@@ -29,14 +38,14 @@ Leftronic output plugin for Fluentd.
 	    type  leftronic
 	    access_key ${leftronic-access-key} # leftronic access key
 	    stream_name ${leftronic-stream-name} # leftronic stream_name
-	    graph_type line # default => line
+	    graph_type line # default => line , number , pie , bar , leaderboard
 	    value Yahoo! Japan_count
 	  </store>
 	  <store>
 	    type  leftronic
 	    access_key ${leftronic-access-key} # leftronic access key
 	    stream_name ${leftronic-stream-name} # leftronic stream_name
-	    graph_type number # default => line
+	    graph_type number # default => line , number , pie , bar , leaderboard
 	    value Googlebot_count
 	  </store>
 	</match>
