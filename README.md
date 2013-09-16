@@ -10,6 +10,9 @@ Leftronic output plugin for Fluentd.
 
 param    |   value
 --------|------
+access_key|leftronic access key
+stream_name|leftronic stream name
+value|count key(line or number only)
 graph_type|line or number or pie or bar or leaderboard
 name_key_pattern|regular expression(pie or bar or leaderboard only)
 display_keys|display key(pie or bar or leaderboard only)
@@ -21,7 +24,7 @@ display_keys|display key(pie or bar or leaderboard only)
       type  leftronic
       access_key ${leftronic-access-key} # leftronic access key
       stream_name ${leftronic-stream-name} # leftronic stream_name
-      count key_name
+      value key_name
     </match>
 
 	<match groupcounter.merged.apache.pv>
