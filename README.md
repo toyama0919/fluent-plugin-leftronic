@@ -1,4 +1,4 @@
-# Fluent::Plugin::Leftronic
+# Fluent::Plugin::Leftronic, a plugin for [Fluentd](http://fluentd.org)
 
 Leftronic output plugin for Fluentd.
 
